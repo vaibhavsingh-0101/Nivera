@@ -31,6 +31,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "redis": "^5.10.0",
+    "resend": "^6.9.3",
     "stripe": "^20.3.1",
     "twilio": "^5.12.2"
   },

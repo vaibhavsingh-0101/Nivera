@@ -1,17 +1,6 @@
-import nodemailer from "nodemailer"
-import dns from "dns"
-dns.setDefaultResultOrder("ipv4first")
+import { Resend } from "resend"
 
-const transporter = nodemailer.createTransport({
-  host: "74.125.140.108", 
-  port: 587,
-  secure: false,
-  family: 4, // force IPv4
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-})
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendVerificationEmail = async (email, token) => {
 
@@ -19,7 +8,6 @@ export const sendVerificationEmail = async (email, token) => {
 
   const html = `
   <div style="font-family:Arial;padding:20px">
-
     <h2>Welcome to Houseofavo</h2>
 
     <p>Please verify your email address.</p>
@@ -31,22 +19,20 @@ export const sendVerificationEmail = async (email, token) => {
     color:white;
     text-decoration:none;
     border-radius:6px;
-    font-weight:bold;
-    ">
+    font-weight:bold;">
       Verify Email
     </a>
 
     <p>If button doesn't work copy this link:</p>
 
     <p>${verifyURL}</p>
-
   </div>
   `
 
-  await transporter.sendMail({
-    from: `"Houseofavo" <${process.env.SMTP_USER}>`,
+  await resend.emails.send({
+    from: "Houseofavo <onboarding@resend.dev>",
     to: email,
     subject: "Verify your email",
-    html
+    html: html
   })
 }
