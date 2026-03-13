@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendVerificationEmail = async (email, token) => {
 
-  const verifyURL = `${process.env.BASE_URL}/api/auth/verify-email/${token}`
+  const verifyURL = `${process.env.BASE_URL}/api/v1/auth/verify-email/${token}`
 
   const html = `
   <div style="font-family:Arial;padding:20px">
