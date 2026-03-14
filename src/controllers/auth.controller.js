@@ -15,47 +15,35 @@ export const registerUser = asyncHandler(async(req,res)=>{
   const {fullName,email,phone,password,role} = req.body
 
   if(!fullName || !email || !phone || !password || !role)
-  throw new ApiError(400,"All fields required")
-
+    throw new ApiError(400,"All fields required")
 
   const existing = await User.findOne({$or:[{email},{phone}]})
 
   if(existing)
-  throw new ApiError(409,"User already exists")
+    throw new ApiError(409,"User already exists")
 
-
-  const key = `otp:${email}`
-
-  const count = await redisClient.incr(key)
-
-  if(count === 1)
-  await redisClient.expire(key,60)
-
-  if(count > 3)
-  throw new ApiError(429,"Too many OTP requests")
-
+  const username = fullName
+    .toLowerCase()
+    .replace(/\s+/g,"-")
 
   const user = new User({
     fullName,
+    username,
     email,
     phone,
     password,
     role
   })
 
-
   const emailToken = user.generateEmailToken()
 
   await user.save()
 
-
   await sendVerificationEmail(email,emailToken)
-
   await sendPhoneOTP(phone)
 
-
   res.status(201).json(
-    new ApiResponse(201,{}, "Verification email sent")
+    new ApiResponse(201,{username},"Verification email sent")
   )
 
 })
@@ -120,41 +108,54 @@ export const verifyPhone = asyncHandler(async(req,res)=>{
 })
 
 
+export const loginUser = asyncHandler(async (req, res) => {
 
-export const loginUser = asyncHandler(async(req,res)=>{
+  const { email, password } = req.body
 
-  const {email,password} = req.body
+  const user = await User.findOne({ email })
 
-  const user = await User.findOne({email})
+  if (!user)
+    throw new ApiError(404, "User not found")
 
-  if(!user)
-  throw new ApiError(404,"User not found")
+  if (!user.emailVerified)
+    throw new ApiError(403, "Email not verified")
 
-  if(!user.emailVerified)
-  throw new ApiError(403,"Email not verified")
-
-  if(!user.phoneVerified)
-  throw new ApiError(403,"Phone not verified")
-
+  if (!user.phoneVerified)
+    throw new ApiError(403, "Phone not verified")
 
   const valid = await user.isPasswordCorrect(password)
 
-  if(!valid)
-  throw new ApiError(401,"Invalid credentials")
-
+  if (!valid)
+    throw new ApiError(401, "Invalid credentials")
 
   const accessToken = user.generateAccessToken()
   const refreshToken = user.generateRefreshToken()
 
   user.refreshToken = refreshToken
+  await user.save({ validateBeforeSave: false })
 
-  await user.save({validateBeforeSave:false})
-
+  const userData = {
+    _id:user._id,
+    fullName:user.fullName,
+    username:user.username,
+    email:user.email,
+    role:user.role
+  }
 
   res
-  .cookie("accessToken",accessToken,{httpOnly:true})
-  .cookie("refreshToken",refreshToken,{httpOnly:true})
-  .json(new ApiResponse(200,{accessToken},"Login success"))
+    .cookie("accessToken", accessToken, { httpOnly: true })
+    .cookie("refreshToken", refreshToken, { httpOnly: true })
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user:userData,
+          accessToken,
+          refreshToken
+        },
+        "Login success"
+      )
+    )
 
 })
 

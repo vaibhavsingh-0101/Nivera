@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema({
     required:true
   },
 
+  username:{
+    type:String,
+    unique:true
+  },
+
   email:{
     type:String,
     required:true,
@@ -50,16 +55,28 @@ const userSchema = new mongoose.Schema({
 
 },{timestamps:true})
 
+
+
+/* AUTO GENERATE USERNAME + HASH PASSWORD */
+
 userSchema.pre("save", async function () {
+
+  if(!this.username && this.fullName){
+    this.username = this.fullName
+      .toLowerCase()
+      .replace(/\s+/g,"-")
+  }
 
   if (!this.isModified("password")) return
 
   const salt = await bcrypt.genSalt(10)
-
   this.password = await bcrypt.hash(this.password, salt)
 
 })
 
+
+
+/* PASSWORD CHECK */
 
 userSchema.methods.isPasswordCorrect = async function(password){
 
@@ -67,6 +84,9 @@ userSchema.methods.isPasswordCorrect = async function(password){
 
 }
 
+
+
+/* ACCESS TOKEN */
 
 userSchema.methods.generateAccessToken = function(){
 
@@ -79,6 +99,9 @@ userSchema.methods.generateAccessToken = function(){
 }
 
 
+
+/* REFRESH TOKEN */
+
 userSchema.methods.generateRefreshToken = function(){
 
   return jwt.sign(
@@ -89,6 +112,9 @@ userSchema.methods.generateRefreshToken = function(){
 
 }
 
+
+
+/* EMAIL TOKEN */
 
 userSchema.methods.generateEmailToken = function(){
 
