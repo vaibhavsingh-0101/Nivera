@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "newnavera",
   "version": "1.0.0",
   "description": "",
@@ -32,4 +33,46 @@
     "stripe": "^22.1.0",
     "twilio": "^6.0.0"
   }
+=======
+  "name": "testhouseofavo",
+  "version": "1.0.0",
+  "description": "App to employer hiring system",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node -r dotenv/config src/index.js",
+    "start": "node src/index.js"
+  },
+  "author": "Vaibhav singh gangwar",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^5.70.1",
+    "cloudinary": "^2.9.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.10.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.3",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.1",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "redis": "^5.10.0",
+    "resend": "^6.9.3",
+    "stripe": "^20.3.1",
+    "twilio": "^5.12.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "keywords": []
+>>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
 }

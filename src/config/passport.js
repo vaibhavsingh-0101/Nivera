@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
 import passport from "passport"
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import { Strategy as FacebookStrategy } from "passport-facebook"

@@ -1,4 +1,5 @@
 export const errorMiddleware = (err, req, res, next) => {
+<<<<<<< HEAD
   console.error("ERROR:", err.message)
 
   // Mongoose duplicate key
@@ -18,9 +19,16 @@ export const errorMiddleware = (err, req, res, next) => {
       message: messages.join(", ")
     })
   }
+=======
+  console.error("ERROR:", err)
+>>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
 
   res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || "Internal Server Error"
   })
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
