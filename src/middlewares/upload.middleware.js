@@ -1,6 +1,5 @@
 import multer from "multer"
 import path from "path"
-<<<<<<< HEAD
 import fs from "fs"
 
 // Ensure upload dirs exist
@@ -43,29 +42,3 @@ export const upload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }  // 5 MB
 })
-=======
-
-const storage = multer.diskStorage({
-
-  destination:(req,file,cb)=>{
-
-    if(file.fieldname === "resume"){
-      cb(null,"uploads/resumes")
-    }else{
-      cb(null,"uploads/profile")
-    }
-
-  },
-
-  filename:(req,file,cb)=>{
-
-    const fileName = Date.now() + path.extname(file.originalname)
-
-    cb(null,fileName)
-
-  }
-
-})
-
-export const upload = multer({storage})
->>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6

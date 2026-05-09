@@ -1,33 +1,8 @@
-<<<<<<< HEAD
-import twilio from "twilio"
-=======
 import twilio from "twilio";
->>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
 
 const client = twilio(
   process.env.TWILIO_SID,
   process.env.TWILIO_AUTH_TOKEN
-<<<<<<< HEAD
-)
-
-export const sendPhoneOTP = async (phone) => {
-  const verification = await client.verify.v2
-    .services(process.env.TWILIO_VERIFY_SERVICE_ID)
-    .verifications.create({ to: phone, channel: "sms" })
-  return verification
-}
-
-export const verifyPhoneOTP = async (phone, code) => {
-  try {
-    const check = await client.verify.v2
-      .services(process.env.TWILIO_VERIFY_SERVICE_ID)
-      .verificationChecks.create({ to: phone, code })
-    return check.status === "approved"
-  } catch {
-    return false
-  }
-}
-=======
 );
 
 // SEND OTP
@@ -63,4 +38,3 @@ export const verifyPhoneOTP = async (phone, code) => {
     return false;
   }
 };
->>>>>>> 4a859b334291646d67fba3da3f4686b0ac99a4f6
