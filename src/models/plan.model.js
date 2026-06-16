@@ -10,12 +10,9 @@ const planSchema = new mongoose.Schema({
   },
 
   price: {
-    type: Number,  // in smallest currency unit — INR paise / USD cents (Stripe standard)
+    type: Number,  // in INR paise (Razorpay uses smallest unit)
     required: true
   },
-
-  // Optional: Stripe Price ID if you create prices in Stripe dashboard
-  stripePriceId: String,
 
   displayPrice: {
     type: Number,  // human-readable INR

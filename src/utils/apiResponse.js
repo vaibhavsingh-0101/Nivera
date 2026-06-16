@@ -6,3 +6,4 @@ export class ApiResponse {
     this.message = message
   }
 }
+

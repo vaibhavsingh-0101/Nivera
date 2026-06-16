@@ -1,8 +1,14 @@
+import dotenv from "dotenv"
+dotenv.config()  // safety net in case passport.js is ever loaded standalone
+
 import passport from "passport"
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
-import { Strategy as FacebookStrategy } from "passport-facebook"
 import { User } from "../models/user.model.js"
 
+// Fail fast with a clear message
+if (!process.env.GOOGLE_ID || !process.env.GOOGLE_SECRET) {
+  throw new Error("❌ Missing GOOGLE_ID or GOOGLE_SECRET in .env")
+}
 
 // ====================== GOOGLE ======================
 passport.use(new GoogleStrategy({
@@ -58,54 +64,54 @@ async (req, accessToken, refreshToken, profile, done) => {
 
 
 // ====================== FACEBOOK ======================
-passport.use(new FacebookStrategy({
-  clientID: process.env.FB_ID,
-  clientSecret: process.env.FB_SECRET,
-  callbackURL: "/api/v1/auth/facebook/callback",
-  profileFields: ["id", "displayName", "emails"],
-  passReqToCallback: true
-},
-async (req, accessToken, refreshToken, profile, done) => {
-  try {
+// passport.use(new FacebookStrategy({
+//   clientID: process.env.FB_ID,
+//   clientSecret: process.env.FB_SECRET,
+//   callbackURL: "/api/v1/auth/facebook/callback",
+//   profileFields: ["id", "displayName", "emails"],
+//   passReqToCallback: true
+// },
+// async (req, accessToken, refreshToken, profile, done) => {
+//   try {
 
-    const email = profile.emails?.[0]?.value || `${profile.id}@facebook.com`
+//     const email = profile.emails?.[0]?.value || `${profile.id}@facebook.com`
 
-    // 🔥 GET ROLE FROM STATE
-    const role = req.query.state || "worker"
+//     // 🔥 GET ROLE FROM STATE
+//     const role = req.query.state || "worker"
 
-    let user = await User.findOne({
-      $or: [
-        { facebookId: profile.id },
-        { email }
-      ]
-    })
+//     let user = await User.findOne({
+//       $or: [
+//         { facebookId: profile.id },
+//         { email }
+//       ]
+//     })
 
-    if (!user) {
-      user = await User.create({
-        fullName: profile.displayName,
-        email,
-        facebookId: profile.id,
-        emailVerified: true,
-        role
-      })
-    } 
-    else {
-      if (role && user.role !== role) {
-        user.role = role
-      }
-    }
+//     if (!user) {
+//       user = await User.create({
+//         fullName: profile.displayName,
+//         email,
+//         facebookId: profile.id,
+//         emailVerified: true,
+//         role
+//       })
+//     } 
+//     else {
+//       if (role && user.role !== role) {
+//         user.role = role
+//       }
+//     }
 
-    user.facebookId = profile.id
-    user.lastLogin = new Date()
+//     user.facebookId = profile.id
+//     user.lastLogin = new Date()
 
-    await user.save()
+//     await user.save()
 
-    done(null, user)
+//     done(null, user)
 
-  } catch (error) {
-    done(error, null)
-  }
-}))
+//   } catch (error) {
+//     done(error, null)
+//   }
+// }))
 
 
 // ====================== SESSION ======================
