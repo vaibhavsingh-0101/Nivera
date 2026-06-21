@@ -12,6 +12,8 @@ import employerRoutes from "../src/routes/employer.routes.js"
 import planRoutes from "../src/routes/plan.routes.js"
 import jobRoutes from "../src/routes/job.routes.js"
 import applicationRoutes from "../src/routes/application.routes.js"
+import messageRoutes from "../src/routes/message.routes.js"
+import postRoutes from "../src/routes/post.routes.js"
 import { errorMiddleware } from "../src/middlewares/error.middleware.js"
 
 const app = express()
@@ -44,6 +46,8 @@ app.use("/api/v1/employer", employerRoutes)
 app.use("/api/v1/plans", planRoutes)
 app.use("/api/v1/jobs", jobRoutes)
 app.use("/api/v1/applications", applicationRoutes)
+app.use("/api/v1/messages", messageRoutes)
+app.use("/api/v1/posts", postRoutes)
 
 /* ── Health check ── */
 app.get("/health", (req, res) => res.json({ status: "ok" }))

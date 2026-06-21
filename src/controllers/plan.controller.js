@@ -1,7 +1,7 @@
 import { Plan } from "../models/plan.model.js"
 import { Subscription } from "../models/subscription.model.js"
 import { Payment } from "../models/payment.model.js"
-import { stripe } from "../config/stripe.js"
+import { stripe } from "../config/Stripe.js"
 import { ApiError } from "../utils/apiError.js"
 import { ApiResponse, asyncHandler } from "../utils/helpers.js"
 
@@ -141,3 +141,35 @@ export const stripeWebhook = async (req, res) => {
 
   res.json({ received: true })
 }
+
+/* ── Dev Bypass subscription creation ── */
+export const devSubscribe = asyncHandler(async (req, res) => {
+  const { planId } = req.body
+
+  const plan = await Plan.findById(planId)
+  if (!plan) throw new ApiError(404, "Plan not found")
+
+  // Deactivate old active subscription
+  await Subscription.updateMany(
+    { employer: req.user._id, isActive: true },
+    { isActive: false }
+  )
+
+  // Create new active subscription
+  const endDate = new Date()
+  endDate.setDate(endDate.getDate() + (plan.validityDays || 30))
+
+  const sub = await Subscription.create({
+    employer: req.user._id,
+    plan: plan._id,
+    planName: plan.name,
+    jobPostLimit: plan.jobPostLimit,
+    endDate,
+    isActive: true,
+    paymentId: "dev_payment_mock"
+  })
+
+  const populatedSub = await Subscription.findById(sub._id).populate("plan")
+
+  res.status(201).json(new ApiResponse(201, populatedSub, "Mock subscription activated successfully (Dev Bypass)"))
+})

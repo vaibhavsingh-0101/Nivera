@@ -4,7 +4,7 @@ import { roleMiddleware } from "../middlewares/role.middleware.js"
 import { requireActivePlan, checkPostLimit } from "../middlewares/plan.middleware.js"
 import {
   createJob, updateJob, deleteJob, getMyJobs,
-  searchJobs, getJob, getMatchingJobs
+  searchJobs, getJob, getMatchingJobs, getMatchingWorkersForJob
 } from "../controllers/job.controller.js"
 
 const router = express.Router()
@@ -29,6 +29,7 @@ router.post(
 )
 
 router.get("/employer/my-jobs", ...isEmployer, getMyJobs)
+router.get("/:id/matching-workers", ...isEmployer, getMatchingWorkersForJob)
 router.put("/:id", ...isEmployer, updateJob)
 router.delete("/:id", ...isEmployer, deleteJob)
 

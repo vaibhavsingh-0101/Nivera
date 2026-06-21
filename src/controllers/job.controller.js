@@ -202,3 +202,28 @@ export const getMatchingJobs = asyncHandler(async (req, res) => {
     pagination: { total, page: Number(page), limit: Number(limit), pages: Math.ceil(total / limit) }
   }))
 })
+
+
+/* ── Employer: get matching workers for a specific job post ── */
+export const getMatchingWorkersForJob = asyncHandler(async (req, res) => {
+  const job = await Job.findById(req.params.id)
+  if (!job) throw new ApiError(404, "Job not found")
+
+  // Verify that the current user is the employer who posted this job
+  if (job.employer.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "Access denied. You are not the employer of this job post.")
+  }
+
+  if (!job.skills || !job.skills.length) {
+    return res.json(new ApiResponse(200, [], "No skills specified on this job post"))
+  }
+
+  const { WorkerProfile } = await import("../models/workerProfile.model.js")
+
+  // Find worker profiles where keySkills intersect with job.skills
+  const profiles = await WorkerProfile.find({
+    keySkills: { $in: job.skills }
+  }).populate("user", "fullName username email phone")
+
+  res.json(new ApiResponse(200, profiles, "Matching workers retrieved"))
+})

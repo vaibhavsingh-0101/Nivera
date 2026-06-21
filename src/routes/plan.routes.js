@@ -5,7 +5,8 @@ import {
   listPlans,
   mySubscription,
   createCheckoutSession,
-  stripeWebhook
+  stripeWebhook,
+  devSubscribe
 } from "../controllers/plan.controller.js"
 
 const router = express.Router()
@@ -19,6 +20,7 @@ router.get("/my-subscription", ...isEmployer, mySubscription)
 
 // ✅ Stripe Checkout (replaces createOrder)
 router.post("/create-checkout", ...isEmployer, createCheckoutSession)
+router.post("/dev-subscribe", ...isEmployer, devSubscribe)
 
 /* ── Stripe Webhook ── */
 // ⚠️ IMPORTANT: raw body required
